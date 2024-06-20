@@ -1,0 +1,37 @@
+# config-map.yaml
+data:
+  config:
+    database:
+      url: "jdbc:postgresql://postgres-svc:5432/postgres"
+
+# ingress.yaml
+ingress:
+  name: webappingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  path: "/"
+  webappServicePort: 8080
+  tls: false
+  tlsSecret: ich-spreche-darueber
+
+# postgres-spring-secrets.yaml
+postgres:
+  dbUser: "CHANGE_ME"
+  dbPassword: "CHANGE_ME"
+  containerPort: 5432
+  service:
+    type: ClusterIP
+
+# webapp
+webapp:
+  image: alsta450/webapp:0.0.1
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+
+# Cluster Issuer
+clusterIssuer:
+  name: "REPLACE_ME"
+  server: "https://acme-v02.api.letsencrypt.org/directory"

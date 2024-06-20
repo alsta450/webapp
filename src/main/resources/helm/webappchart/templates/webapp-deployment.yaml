@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  namespace: webapp
+  labels:
+    app: webapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z postgres-svc 5432; do echo waiting for db; sleep 2; done;' ]
+      containers:
+        - image: {{ .Values.webapp.image }}
+          name: webapp-app
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: spring-secret
+                  key: database_user
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spring-secret
+                  key: database_password
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: spring-config
+                  key: DATABASE_URL
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
