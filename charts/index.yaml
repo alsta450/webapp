@@ -9,6 +9,6 @@ entries:
     name: webappchart
     type: application
     urls:
-    - https://alsta450.github.io/game-app-helm/charts/webappchart-0.1.0.tgz
+    - https://alsta450.github.io/webapp/charts/webappchart-0.1.0.tgz
     version: 0.1.0
 generated: "2024-06-21T15:41:30.1447368+02:00"
